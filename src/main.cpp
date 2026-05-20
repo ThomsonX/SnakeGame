@@ -13,17 +13,19 @@ Vector2 GetBoardSize()
 struct Apple
 {
     Vector2 position{2, 2};
-
+    Texture2D apple = LoadTexture("resources/apple.png");
     void RandomPlacement()
     {
         Vector2 boardSize = GetBoardSize();
         position = {(float)(rand() % (int)boardSize.x), (float)(rand() % (int)boardSize.y)};
     }
-
     void Draw()
     {
-        // DrawTexturePro(Texture2D texture, Rectangle source, Rectangle dest, Vector2 origin, float rotation, WHITE);
-        DrawRectangle(position.x * size, position.y * size, size, size, RED);
+        
+       
+
+    DrawTexturePro(apple,{0, 0, (float)apple.width, (float)apple.height},{(float)position.x * size, (float)position.y * size, (float)size, (float)size},{0, 0},0,WHITE);
+        //DrawRectangle(position.x * size, position.y * size, size, size, RED);
     }
 };
 
