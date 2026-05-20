@@ -9,8 +9,8 @@ const float CELL_SIZE = 50;
 
 Vector2 GetBoardSize()
 {
-    return {(float)floor(GetRenderWidth() / CELL_SIZE),
-            (float)floor(GetRenderHeight() / CELL_SIZE)};
+    return {(float)floor(GetScreenWidth() / CELL_SIZE),
+            (float)floor(GetScreenHeight() / CELL_SIZE)};
 }
 
 struct Apple
@@ -21,8 +21,10 @@ struct Apple
     void SetRandomPosition()
     {
         Vector2 boardSize = GetBoardSize();
-        position = {(float)GetRandomValue(0, boardSize.x), (float)GetRandomValue(0, boardSize.y)};
+        position = {(float)GetRandomValue(0, boardSize.x - 1),
+                    (float)GetRandomValue(0, boardSize.y - 1)};
     }
+
     void Draw()
     {
         DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height},
