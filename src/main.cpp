@@ -9,8 +9,8 @@ const float CELL_SIZE = 50;
 
 Vector2 GetBoardSize()
 {
-    return {(float)floor(GetScreenWidth() / CELL_SIZE),
-            (float)floor(GetScreenHeight() / CELL_SIZE)};
+    return {(float)floor(GetRenderWidth() / CELL_SIZE),
+            (float)floor(GetRenderHeight() / CELL_SIZE)};
 }
 
 struct Apple
@@ -107,11 +107,11 @@ int main()
 {
     srand(time(0));
 
-    InitWindow(800, 600, "raylib");
+    InitWindow(800, 600, "Snake");
     SetTargetFPS(60);
 
+    const double TICK_TIME = 0.2;
     double timer = GetTime();
-    double tickTime = 0.2;
 
     Snake snake;
     Apple apple;
@@ -123,7 +123,7 @@ int main()
 
         ClearBackground(BLACK);
 
-        if (GetTime() - timer >= tickTime)
+        if (GetTime() - timer >= TICK_TIME)
         {
             snake.Move();
             snake.HandleCollision(apple);
