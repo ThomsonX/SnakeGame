@@ -47,10 +47,12 @@ enum Direction
 struct Snake
 {
     std::vector<Vector2> body = {{2, 0}, {1, 0}, {0, 0}};
-    Direction direction = Right;
+    Direction direction = Right, nextDirection = Right;
 
     void Move(bool removeLast = true)
     {
+        direction = nextDirection;
+
         Vector2 head = body[0];
         switch (direction)
         {
@@ -98,10 +100,10 @@ struct Snake
 
     void Update()
     {
-        if (IsKeyPressed(KEY_LEFT) && direction != Right) direction = Left;
-        if (IsKeyPressed(KEY_RIGHT) && direction != Left) direction = Right;
-        if (IsKeyPressed(KEY_UP) && direction != Down) direction = Up;
-        if (IsKeyPressed(KEY_DOWN) && direction != Up) direction = Down;
+        if (IsKeyPressed(KEY_LEFT) && direction != Right) nextDirection = Left;
+        if (IsKeyPressed(KEY_RIGHT) && direction != Left) nextDirection = Right;
+        if (IsKeyPressed(KEY_UP) && direction != Down) nextDirection = Up;
+        if (IsKeyPressed(KEY_DOWN) && direction != Up) nextDirection = Down;
     }
 
     void Draw()
