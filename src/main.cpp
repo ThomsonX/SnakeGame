@@ -48,8 +48,9 @@ struct Snake
 {
     std::vector<Vector2> body = {{2, 0}, {1, 0}, {0, 0}};
     Direction direction = Right, nextDirection = Right;
+    Vector2 lastTailPos = body.back();
 
-    void Move(bool removeLast = true)
+    void Move()
     {
         direction = nextDirection;
 
@@ -77,8 +78,11 @@ struct Snake
         if (head.y > boardSize.y - 1) head.y = 0;
 
         body.insert(body.begin(), head);
-        if (removeLast) body.pop_back();
+        lastTailPos = body.back();
+        body.pop_back();
     }
+
+    void Grow() { body.push_back(lastTailPos); }
 
     bool IsAppleOnSnake(const Apple& apple)
     {
@@ -91,10 +95,10 @@ struct Snake
 
     void HandleCollision(Apple& apple)
     {
-        while (IsAppleOnSnake(apple))
+        if (IsAppleOnSnake(apple))
         {
-            apple.SetRandomPosition();
-            Move(false);
+            Grow();
+            while (IsAppleOnSnake(apple)) apple.SetRandomPosition();
         }
     }
 
