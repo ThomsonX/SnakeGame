@@ -18,11 +18,10 @@ Vector2 GetBoardSize()
             (float)floor(GetRenderHeight() / CELL_SIZE)};
 }
 
-void DrawTextureSize(Texture texture, Rectangle rec)
+void DrawTextureSize(Texture texture, Rectangle rec, Color color)
 {
-    DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height},
-                       rec,
-                       {0, 0}, 0, WHITE);
+    DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height}, rec, {0, 0}, 0,
+                   color);
 }
 
 struct Apple
@@ -39,9 +38,8 @@ struct Apple
 
     void Draw()
     {
-        DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height},
-                       {position.x * CELL_SIZE, position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE},
-                       {0, 0}, 0, WHITE);
+        DrawTextureSize(
+            texture, {position.x * CELL_SIZE, position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE}, WHITE);
     }
 };
 
