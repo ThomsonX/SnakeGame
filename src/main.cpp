@@ -5,6 +5,9 @@
 #include <raymath.h>
 #include <vector>
 
+#define RAYGUI_IMPLEMENTATION
+#include <raygui.h>
+
 const float CELL_SIZE = 50;
 
 Vector2 GetBoardSize()
@@ -96,7 +99,7 @@ struct Snake
     {
         for (int i = 0; i < body.size(); i++)
         {
-            Color color = ColorLerp(GREEN, WHITE, i * 1.0 / body.size());
+            Color color = ColorLerp(GREEN, WHITE, (float)i / body.size());
             DrawRectangle(body[i].x * CELL_SIZE, body[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE,
                           color);
         }
