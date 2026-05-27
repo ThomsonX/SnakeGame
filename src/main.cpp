@@ -78,9 +78,18 @@ struct Snake
         if (removeLast) body.pop_back();
     }
 
+    bool IsAppleOnSnake(const Apple& apple)
+    {
+        for (int i = 0; i < body.size(); i++)
+        {
+            if (apple.position == body[i]) return true;
+        }
+        return false;
+    }
+
     void HandleCollision(Apple& apple)
     {
-        if (apple.position == body[0])
+        while (IsAppleOnSnake(apple))
         {
             apple.SetRandomPosition();
             Move(false);
