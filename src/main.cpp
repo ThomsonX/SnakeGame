@@ -10,10 +10,19 @@
 
 const float CELL_SIZE = 50;
 
+bool isGameOver = false;
+
 Vector2 GetBoardSize()
 {
     return {(float)floor(GetRenderWidth() / CELL_SIZE),
             (float)floor(GetRenderHeight() / CELL_SIZE)};
+}
+
+void DrawTextureSize(Texture texture, Rectangle rec)
+{
+    DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height},
+                       rec,
+                       {0, 0}, 0, WHITE);
 }
 
 struct Apple
@@ -21,7 +30,7 @@ struct Apple
     Vector2 position{2, 2};
     Texture2D texture = LoadTexture("resources/apple.png");
 
-    void SetRandomPosition()
+    void Reset()
     {
         Vector2 boardSize = GetBoardSize();
         position = {(float)GetRandomValue(0, boardSize.x - 1),
@@ -46,9 +55,19 @@ enum Direction
 
 struct Snake
 {
-    std::vector<Vector2> body = {{2, 0}, {1, 0}, {0, 0}};
-    Direction direction = Right, nextDirection = Right;
-    Vector2 lastTailPos = body.back();
+    std::vector<Vector2> body;
+    Direction direction, nextDirection;
+    Vector2 lastTailPos;
+
+    Snake() { Reset(); }
+
+    void Reset()
+    {
+        body = {{2, 0}, {1, 0}, {0, 0}};
+        direction = Right;
+        nextDirection = Right;
+        lastTailPos = body.back();
+    }
 
     void Move()
     {
@@ -93,12 +112,25 @@ struct Snake
         return false;
     }
 
+    bool IsHeadOnBody()
+    {
+        for (int i = 1; i < body.size(); i++)
+        {
+            if (body[0] == body[i]) return true;
+        }
+        return false;
+    }
+
     void HandleCollision(Apple& apple)
     {
         if (IsAppleOnSnake(apple))
         {
             Grow();
-            while (IsAppleOnSnake(apple)) apple.SetRandomPosition();
+            while (IsAppleOnSnake(apple)) apple.Reset();
+        }
+        if (IsHeadOnBody())
+        {
+            isGameOver = true;
         }
     }
 
@@ -121,9 +153,40 @@ struct Snake
     }
 };
 
+Snake snake;
+
+void DrawRectangleRecCentered(Vector2 size, Color color)
+{
+    float posX = GetScreenWidth() / 2.0 - size.x / 2.0;
+    float posY = GetScreenHeight() / 2.0 - size.y / 2.0;
+    DrawRectangle(posX, posY, size.x, size.y, color);
+}
+
+void DrawTextCentered(const char* text, float posY, int fontSize, Color color)
+{
+    float posX = GetScreenWidth() / 2.0 - MeasureText(text, fontSize) / 2.0;
+    DrawText(text, posX, posY, fontSize, color);
+}
+
+void DrawGameOver()
+{
+    DrawRectangleRecCentered({500, 400}, GRAY);
+    DrawTextCentered("Game Over!", 50, 24, RED);
+
+    if (GuiButton({0, 0, 100, 50}, "Restart"))
+    {
+        isGameOver = false;
+        snake.Reset();
+    }
+}
+
 int main()
 {
     srand(time(0));
+
+    int flags = 0;
+    flags |= FLAG_WINDOW_RESIZABLE;
+    SetConfigFlags(flags);
 
     InitWindow(800, 600, "Snake");
     SetTargetFPS(60);
@@ -131,9 +194,8 @@ int main()
     const double TICK_TIME = 0.2;
     double timer = GetTime();
 
-    Snake snake;
     Apple apple;
-    apple.SetRandomPosition();
+    apple.Reset();
 
     while (!WindowShouldClose())
     {
@@ -141,17 +203,21 @@ int main()
 
         ClearBackground(BLACK);
 
-        if (GetTime() - timer >= TICK_TIME)
+        if (!isGameOver)
         {
-            snake.Move();
-            snake.HandleCollision(apple);
-            timer = GetTime();
-        }
+            if (GetTime() - timer >= TICK_TIME)
+            {
+                snake.Move();
+                snake.HandleCollision(apple);
+                timer = GetTime();
+            }
 
-        snake.Update();
+            snake.Update();
+        }
 
         snake.Draw();
         apple.Draw();
+        if (isGameOver) DrawGameOver();
 
         EndDrawing();
     }
