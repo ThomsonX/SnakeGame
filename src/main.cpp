@@ -173,7 +173,9 @@ void DrawGameOver()
     DrawRectangleRecCentered({500, 400}, GRAY);
     DrawTextCentered("Game Over!", 50, 24, RED);
 
-    if (GuiButton({0, 0, 100, 50}, "Restart"))
+    float buttonWidth = 100;
+    float buttonHeight = 50;
+    if (GuiButton({(GetScreenWidth() / 2.0f - buttonWidth / 2.0f), (GetScreenHeight() / 2.0f - buttonHeight / 2.0f), buttonWidth, buttonHeight}, "Restart"))
     {
         isGameOver = false;
         snake.Reset();
