@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
@@ -91,16 +92,17 @@ struct Snake
 
         Vector2 boardSize = GetBoardSize();
 
-        if(deadlyWalls)
+        if (deadlyWalls)
         {
-            if(head.x < 0 || head.x > boardSize.x - 1 || head.y < 0 || head.y > boardSize.y - 1) isGameOver=true;
+            if (head.x < 0 || head.x > boardSize.x - 1 || head.y < 0 || head.y > boardSize.y - 1)
+                isGameOver = true;
         }
-        else 
+        else
         {
             if (head.x < 0) head.x = boardSize.x - 1;
             if (head.x > boardSize.x - 1) head.x = 0;
             if (head.y < 0) head.y = boardSize.y - 1;
-            if (head.y > boardSize.y - 1) head.y = 0;            
+            if (head.y > boardSize.y - 1) head.y = 0;
         }
 
         body.insert(body.begin(), head);
@@ -175,25 +177,40 @@ void DrawTextCentered(const char* text, float posY, int fontSize, Color color)
     DrawText(text, posX, posY, fontSize, color);
 }
 
+bool DrawButtonCentered(Vector2 size, float posY, const char* text)
+{
+    return GuiButton({(GetScreenWidth() / 2.0f - size.x / 2.0f), posY, size.x, size.y}, text);
+}
+
 void DrawGameOver()
 {
-    DrawRectangleRecCentered({500, 400}, GRAY);
-    DrawTextCentered("Game Over!", 200, 24, RED);
+    const Vector2 recSize = {500, 400};
+    const float padding = 20, margin = 30;
+    const float fontSize = 24;
+    const Vector2 buttonSize = {160, 50};
 
-    float buttonWidth = 160;
-    float buttonHeight = 50;
-    if (GuiButton({(GetScreenWidth() / 2.0f - buttonWidth / 2.0f), (GetScreenHeight() / 2.0f - buttonHeight / 2.0f), buttonWidth, buttonHeight}, "Restart"))
+    DrawRectangleRecCentered(recSize, GRAY);
+
+    float posY = GetScreenHeight() / 2.0f - recSize.y / 2.0f + margin;
+
+    DrawTextCentered("Game Over!", posY, fontSize, RED);
+    posY += fontSize + padding;
+
+    posY = std::max(posY, GetScreenHeight() / 2.0f - buttonSize.y / 2.0f);
+
+    if (DrawButtonCentered(buttonSize, posY, "Restart"))
     {
         isGameOver = false;
         snake.Reset();
     }
+    posY += buttonSize.y + padding;
 
     const char* modeText = deadlyWalls ? "Mode: Deadly Walls" : "Mode: Looping";
-
-    if (GuiButton({(GetScreenWidth() / 2.0f - buttonWidth / 2.0f), (GetScreenHeight() / 2.0f - buttonHeight / 2.0f + 70.0f), buttonWidth, buttonHeight}, modeText))
+    if (DrawButtonCentered(buttonSize, posY, modeText))
     {
         deadlyWalls = !deadlyWalls;
     }
+    posY += buttonSize.y + padding;
 }
 
 int main()
