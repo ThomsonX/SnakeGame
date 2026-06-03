@@ -27,6 +27,12 @@ void DrawTextureSize(Texture texture, Rectangle rec, Color color)
                    color);
 }
 
+void DrawTextureSizeEx(Texture texture, Rectangle rec, Vector2 origin, float rotation, Color color)
+{
+    DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height}, rec, origin,
+                   rotation, color);
+}
+
 void DrawRectangleRecCentered(Vector2 size, Color color)
 {
     float posX = GetScreenWidth() / 2.0 - size.x / 2.0;
@@ -53,9 +59,14 @@ void DrawIcon(int iconId, int posX, int posY, float size, Color color)
 struct Apple
 {
     Vector2 position{2, 2};
-    Texture2D texture;
+    Texture texture;
 
-    void Init() { texture = LoadTexture("resources/apple.png"); }
+    void Init()
+    {
+        texture = LoadTexture("resources/apple.png");
+
+        Reset();
+    }
 
     void Reset()
     {
@@ -83,25 +94,48 @@ enum Direction
 
 struct Snake
 {
-    std::vector<Vector2> body;
-    Direction direction, nextDirection;
-    Vector2 lastTailPos;
+    struct BodyPiece
+    {
+        Vector2 pos;
+        Direction direction;
+    };
 
-    Snake() { Reset(); }
+    std::vector<BodyPiece> body;
+    Direction direction, nextDirection;
+    BodyPiece lastBodyPiece;
+    Texture headTexture;
+    Texture headDeadTexture;
+    Texture bodyTexture;
+    Texture cornerTexture;
+    Texture tailTexture;
+
+    void Init()
+    {
+        headTexture = LoadTexture("resources/snake_head.png");
+        headDeadTexture = LoadTexture("resources/snake_head_dead.png");
+        bodyTexture = LoadTexture("resources/snake_body.png");
+        cornerTexture = LoadTexture("resources/snake_corner.png");
+        tailTexture = LoadTexture("resources/snake_tail.png");
+
+        Reset();
+    }
 
     void Reset()
     {
-        body = {{2, 0}, {1, 0}, {0, 0}};
+        body = {
+            {{5, 0}, Right}, {{4, 0}, Right}, {{3, 0}, Right},
+            {{2, 0}, Right}, {{1, 0}, Right}, {{0, 0}, Right},
+        };
         direction = Right;
         nextDirection = Right;
-        lastTailPos = body.back();
+        lastBodyPiece = body.back();
     }
 
     void Move()
     {
         direction = nextDirection;
 
-        Vector2 head = body[0];
+        Vector2 head = body[0].pos;
         switch (direction)
         {
         case Left:
@@ -123,7 +157,10 @@ struct Snake
         if (deadlyWalls)
         {
             if (head.x < 0 || head.x > boardSize.x - 1 || head.y < 0 || head.y > boardSize.y - 1)
+            {
                 isGameOver = true;
+                return;
+            }
         }
         else
         {
@@ -133,18 +170,18 @@ struct Snake
             if (head.y > boardSize.y - 1) head.y = 0;
         }
 
-        body.insert(body.begin(), head);
-        lastTailPos = body.back();
+        body.insert(body.begin(), {head, direction});
+        lastBodyPiece = body.back();
         body.pop_back();
     }
 
-    void Grow() { body.push_back(lastTailPos); }
+    void Grow() { body.push_back(lastBodyPiece); }
 
     bool IsAppleOnSnake(const Apple& apple)
     {
         for (int i = 0; i < body.size(); i++)
         {
-            if (apple.position == body[i]) return true;
+            if (apple.position == body[i].pos) return true;
         }
         return false;
     }
@@ -153,7 +190,7 @@ struct Snake
     {
         for (int i = 1; i < body.size(); i++)
         {
-            if (body[0] == body[i]) return true;
+            if (body[0].pos == body[i].pos) return true;
         }
         return false;
     }
@@ -168,7 +205,15 @@ struct Snake
         if (IsHeadOnBody())
         {
             isGameOver = true;
+            RollBack();
         }
+    }
+
+    void RollBack()
+    {
+        body.push_back(lastBodyPiece);
+        body.erase(body.begin());
+        direction = body[0].direction;
     }
 
     void Update()
@@ -183,9 +228,70 @@ struct Snake
     {
         for (int i = 0; i < body.size(); i++)
         {
-            Color color = ColorLerp(GREEN, WHITE, (float)i / body.size());
-            DrawRectangle(body[i].x * CELL_SIZE, body[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE,
-                          color);
+            float rotation = 0;
+            Direction direction = body[i].direction;
+            if (i > 0) direction = body[i - 1].direction;
+            switch (direction)
+            {
+            case Up:
+                rotation = 0;
+                break;
+            case Right:
+                rotation = 90;
+                break;
+            case Down:
+                rotation = 180;
+                break;
+            case Left:
+                rotation = 270;
+                break;
+            }
+
+            Texture texture = bodyTexture;
+            if (i == 0)
+            {
+                if (isGameOver)
+                    texture = headDeadTexture;
+                else
+                    texture = headTexture;
+            }
+            else if (i == body.size() - 1)
+            {
+                texture = tailTexture;
+            }
+            else if (i > 0 && body[i].direction != body[i - 1].direction)
+            {
+                texture = cornerTexture;
+                if (body[i].direction == Up)
+                {
+                    if (body[i - 1].direction == Right) rotation = 0;
+                    if (body[i - 1].direction == Left) rotation = 90;
+                }
+                else if (body[i].direction == Right)
+                {
+                    if (body[i - 1].direction == Down) rotation = 90;
+                    if (body[i - 1].direction == Up) rotation = 180;
+                }
+                else if (body[i].direction == Down)
+                {
+                    if (body[i - 1].direction == Left) rotation = 180;
+                    if (body[i - 1].direction == Right) rotation = 270;
+                }
+                else if (body[i].direction == Left)
+                {
+                    if (body[i - 1].direction == Up) rotation = 270;
+                    if (body[i - 1].direction == Down) rotation = 0;
+                }
+            }
+
+            DrawTextureSizeEx(texture,
+                              {
+                                  body[i].pos.x * CELL_SIZE + CELL_SIZE / 2,
+                                  body[i].pos.y * CELL_SIZE + CELL_SIZE / 2,
+                                  CELL_SIZE,
+                                  CELL_SIZE,
+                              },
+                              {CELL_SIZE / 2, CELL_SIZE / 2}, rotation, WHITE);
         }
     }
 };
@@ -253,8 +359,8 @@ int main()
     const double TICK_TIME = 0.2;
     double timer = GetTime();
 
+    snake.Init();
     apple.Init();
-    apple.Reset();
 
     while (!WindowShouldClose())
     {
