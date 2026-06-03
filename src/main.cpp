@@ -13,6 +13,7 @@ const float CELL_SIZE = 50;
 
 bool deadlyWalls = false;
 bool isGameOver = false;
+bool isSettings = false;
 
 Vector2 GetBoardSize()
 {
@@ -26,10 +27,35 @@ void DrawTextureSize(Texture texture, Rectangle rec, Color color)
                    color);
 }
 
+void DrawRectangleRecCentered(Vector2 size, Color color)
+{
+    float posX = GetScreenWidth() / 2.0 - size.x / 2.0;
+    float posY = GetScreenHeight() / 2.0 - size.y / 2.0;
+    DrawRectangle(posX, posY, size.x, size.y, color);
+}
+
+void DrawTextCentered(const char* text, float posY, int fontSize, Color color)
+{
+    float posX = GetScreenWidth() / 2.0 - MeasureText(text, fontSize) / 2.0;
+    DrawText(text, posX, posY, fontSize, color);
+}
+
+bool DrawButtonCentered(Vector2 size, float posY, const char* text)
+{
+    return GuiButton({(GetScreenWidth() / 2.0f - size.x / 2.0f), posY, size.x, size.y}, text);
+}
+
+void DrawIcon(int iconId, int posX, int posY, float size, Color color)
+{
+    GuiDrawIcon(iconId, posX, posY, size / RAYGUI_ICON_SIZE, color);
+}
+
 struct Apple
 {
     Vector2 position{2, 2};
-    Texture2D texture = LoadTexture("resources/apple.png");
+    Texture2D texture;
+
+    void Init() { texture = LoadTexture("resources/apple.png"); }
 
     void Reset()
     {
@@ -44,6 +70,8 @@ struct Apple
             texture, {position.x * CELL_SIZE, position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE}, WHITE);
     }
 };
+
+Apple apple;
 
 enum Direction
 {
@@ -164,31 +192,20 @@ struct Snake
 
 Snake snake;
 
-void DrawRectangleRecCentered(Vector2 size, Color color)
+void RestartGame()
 {
-    float posX = GetScreenWidth() / 2.0 - size.x / 2.0;
-    float posY = GetScreenHeight() / 2.0 - size.y / 2.0;
-    DrawRectangle(posX, posY, size.x, size.y, color);
+    isGameOver = false;
+    snake.Reset();
+    apple.Reset();
 }
 
-void DrawTextCentered(const char* text, float posY, int fontSize, Color color)
-{
-    float posX = GetScreenWidth() / 2.0 - MeasureText(text, fontSize) / 2.0;
-    DrawText(text, posX, posY, fontSize, color);
-}
-
-bool DrawButtonCentered(Vector2 size, float posY, const char* text)
-{
-    return GuiButton({(GetScreenWidth() / 2.0f - size.x / 2.0f), posY, size.x, size.y}, text);
-}
+const Vector2 recSize = {500, 400};
+const float padding = 20, margin = 30;
+const float fontSize = 24;
+const Vector2 buttonSize = {160, 50};
 
 void DrawGameOver()
 {
-    const Vector2 recSize = {500, 400};
-    const float padding = 20, margin = 30;
-    const float fontSize = 24;
-    const Vector2 buttonSize = {160, 50};
-
     DrawRectangleRecCentered(recSize, GRAY);
 
     float posY = GetScreenHeight() / 2.0f - recSize.y / 2.0f + margin;
@@ -200,10 +217,19 @@ void DrawGameOver()
 
     if (DrawButtonCentered(buttonSize, posY, "Restart"))
     {
-        isGameOver = false;
-        snake.Reset();
+        RestartGame();
     }
     posY += buttonSize.y + padding;
+}
+
+void DrawSettings()
+{
+    DrawRectangleRecCentered(recSize, GRAY);
+
+    float posY = GetScreenHeight() / 2.0f - recSize.y / 2.0f + margin;
+
+    DrawTextCentered("Settings", posY, fontSize, RED);
+    posY += fontSize + padding;
 
     const char* modeText = deadlyWalls ? "Mode: Deadly Walls" : "Mode: Looping";
     if (DrawButtonCentered(buttonSize, posY, modeText))
@@ -217,7 +243,7 @@ int main()
 {
     srand(time(0));
 
-    int flags = 0;
+    unsigned int flags = 0;
     flags |= FLAG_WINDOW_RESIZABLE;
     SetConfigFlags(flags);
 
@@ -227,7 +253,7 @@ int main()
     const double TICK_TIME = 0.2;
     double timer = GetTime();
 
-    Apple apple;
+    apple.Init();
     apple.Reset();
 
     while (!WindowShouldClose())
@@ -236,7 +262,7 @@ int main()
 
         ClearBackground(BLACK);
 
-        if (!isGameOver)
+        if (!isGameOver && !isSettings)
         {
             if (GetTime() - timer >= TICK_TIME)
             {
@@ -250,7 +276,19 @@ int main()
 
         snake.Draw();
         apple.Draw();
+        const float buttonSize = 32;
+        if (GuiButton({(float)GetRenderWidth() - buttonSize, 0, buttonSize, buttonSize}, ""))
+        {
+            isSettings = !isSettings;
+        }
+        DrawIcon(ICON_GEAR, (float)GetRenderWidth() - buttonSize, 0, buttonSize, GRAY);
+        if (GuiButton({(float)GetRenderWidth() - buttonSize * 2, 0, buttonSize, buttonSize}, ""))
+        {
+            RestartGame();
+        }
+        DrawIcon(ICON_REPEAT, (float)GetRenderWidth() - buttonSize * 2, 0, buttonSize, GRAY);
         if (isGameOver) DrawGameOver();
+        if (isSettings) DrawSettings();
 
         EndDrawing();
     }

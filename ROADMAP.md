@@ -12,4 +12,5 @@
 - [ ] Add multiple players support
 - [ ] Add multiple apples support
 - [ ] Add more game modes
-- [ ] Add settings
+- [x] Add settings
+- [ ] Split the code into separate files
