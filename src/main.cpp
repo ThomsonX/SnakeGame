@@ -123,8 +123,9 @@ struct Snake
     void Reset()
     {
         body = {
-            {{5, 0}, Right}, {{4, 0}, Right}, {{3, 0}, Right},
-            {{2, 0}, Right}, {{1, 0}, Right}, {{0, 0}, Right},
+            {{2, 0}, Right},
+            {{1, 0}, Right},
+            {{0, 0}, Right},
         };
         direction = Right;
         nextDirection = Right;
