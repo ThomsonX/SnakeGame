@@ -2,13 +2,16 @@
 
 set -e
 
+executable_name=main
+
 cmake -B build
 cmake --build build -j$(nproc)
 
-# Find a file to execute
-for file in build/main build/Debug/main build/Release/main; do
+# Assert dominanace on Visual St*dio
+for file in build/Debug/$executable_name build/Release/$executable_name; do
     if [ -f $file ]; then
-        ./$file
-        break
+        mv $file ./build/$executable_name
     fi
 done
+
+./build/$executable_name
