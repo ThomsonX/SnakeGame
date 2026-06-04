@@ -15,6 +15,8 @@ bool deadlyWalls = false;
 bool isGameOver = false;
 bool isSettings = false;
 bool hihihiha = false;
+Sound hihihiha_mp3;
+Sound munch;
 
 Vector2 GetBoardSize()
 {
@@ -361,8 +363,8 @@ int main()
     SetTargetFPS(60);
     InitAudioDevice();
     SetAudioStreamBufferSizeDefault(8192);
-    Sound hihihiha_mp3 = LoadSound("resources/hihihiha.mp3");
-    Sound munch = LoadSound("resources/munch.mp3");
+    hihihiha_mp3 = LoadSound("resources/hihihiha.mp3");
+    munch = LoadSound("resources/munch.mp3");
 
     const double TICK_TIME = 0.2;
     double timer = GetTime();
