@@ -351,11 +351,12 @@ int main()
     srand(time(0));
 
     unsigned int flags = 0;
+    flags |= FLAG_VSYNC_HINT;
     flags |= FLAG_WINDOW_RESIZABLE;
     SetConfigFlags(flags);
 
     InitWindow(800, 600, "Snake");
-    SetTargetFPS(60);
+    SetExitKey(KEY_NULL);
 
     const double TICK_TIME = 0.2;
     double timer = GetTime();
