@@ -14,6 +14,7 @@ const float CELL_SIZE = 50;
 bool deadlyWalls = false;
 bool isGameOver = false;
 bool isSettings = false;
+bool hihihiha = false;
 
 Vector2 GetBoardSize()
 {
@@ -201,6 +202,8 @@ struct Snake
         if (IsAppleOnSnake(apple))
         {
             Grow();
+            if (hihihiha == true) PlaySound(hihihiha_mp3);
+            else PlaySound(munch);
             while (IsAppleOnSnake(apple)) apple.Reset();
         }
         if (IsHeadOnBody())
@@ -356,6 +359,10 @@ int main()
 
     InitWindow(800, 600, "Snake");
     SetTargetFPS(60);
+    InitAudioDevice();
+    SetAudioStreamBufferSizeDefault(8192);
+    Sound hihihiha_mp3 = LoadSound("resources/hihihiha.mp3");
+    Sound munch = LoadSound("resources/munch.mp3");
 
     const double TICK_TIME = 0.2;
     double timer = GetTime();
@@ -401,6 +408,5 @@ int main()
     }
 
     CloseWindow();
-
     return 0;
 }
