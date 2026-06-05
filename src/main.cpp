@@ -349,6 +349,13 @@ void DrawSettings()
         deadlyWalls = !deadlyWalls;
     }
     posY += buttonSize.y + padding;
+GuiToggle((Rectangle)
+    {
+    GetScreenWidth() / 2.0f - buttonSize.x / 2.0f,posY,buttonSize.x,buttonSize.y
+    },
+    hihihiha ? "ON ???" : "OFF ???",
+    &hihihiha
+);
 }
 
 int main()
