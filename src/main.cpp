@@ -363,11 +363,14 @@ int main()
     srand(time(0));
 
     unsigned int flags = 0;
+    flags |= FLAG_VSYNC_HINT;
     flags |= FLAG_WINDOW_RESIZABLE;
     SetConfigFlags(flags);
 
     InitWindow(800, 600, "Snake");
     SetTargetFPS(60);
+    SetExitKey(KEY_NULL);
+  
     InitAudioDevice();
     SetAudioStreamBufferSizeDefault(8192);
     hihihiha_mp3 = LoadSound("resources/hihihiha.mp3");
