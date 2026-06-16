@@ -15,8 +15,11 @@ bool deadlyWalls = false;
 bool isGameOver = false;
 bool isSettings = false;
 bool hihihiha = false;
+bool gameOverSound = false;
 Sound hihihiha_mp3;
 Sound munch;
+Sound sigeon_pex;
+Sound game_over;
 
 Vector2 GetBoardSize()
 {
@@ -163,6 +166,8 @@ struct Snake
             if (head.x < 0 || head.x > boardSize.x - 1 || head.y < 0 || head.y > boardSize.y - 1)
             {
                 isGameOver = true;
+                if(gameOverSound) PlaySound(sigeon_pex);
+                else PlaySound(game_over);
                 return;
             }
         }
@@ -211,6 +216,8 @@ struct Snake
         if (IsHeadOnBody())
         {
             isGameOver = true;
+            if(gameOverSound) PlaySound(sigeon_pex);
+            else PlaySound(game_over);
             RollBack();
         }
     }
@@ -349,13 +356,21 @@ void DrawSettings()
         deadlyWalls = !deadlyWalls;
     }
     posY += buttonSize.y + padding;
-GuiToggle((Rectangle)
-    {
-    GetScreenWidth() / 2.0f - buttonSize.x / 2.0f,posY,buttonSize.x,buttonSize.y
-    },
-    hihihiha ? "ON ???" : "OFF ???",
-    &hihihiha
-);
+    GuiToggle(Rectangle
+        {
+        GetScreenWidth() / 2.0f - buttonSize.x / 2.0f,posY,buttonSize.x,buttonSize.y
+        },
+        hihihiha ? "Apple sound: hihihiha" : "Apple sound: munch",
+        &hihihiha
+    );
+    posY += buttonSize.y + padding;
+    GuiToggle(Rectangle
+        {
+        GetScreenWidth() / 2.0f - buttonSize.x / 2.0f,posY,buttonSize.x,buttonSize.y
+        },
+        gameOverSound ? "Game Over sound: ???" : "Game Over sound: trumpet",
+        &gameOverSound
+    );
 }
 
 int main()
@@ -375,6 +390,11 @@ int main()
     SetAudioStreamBufferSizeDefault(8192);
     hihihiha_mp3 = LoadSound("resources/hihihiha.mp3");
     munch = LoadSound("resources/munch.mp3");
+    sigeon_pex = LoadSound("resources/sigeon_pex.mp3");
+    game_over = LoadSound("resources/game_over.mp3");
+
+    SetSoundVolume(game_over, 0.35f);
+    SetSoundVolume(sigeon_pex, 1.0f);
 
     const double TICK_TIME = 0.2;
     double timer = GetTime();
