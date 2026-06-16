@@ -89,7 +89,45 @@ struct Apple
     }
 };
 
-Apple apple;
+//Apple apple;
+
+std::vector<Apple> apples;
+
+bool IsAppleOnApple(const std::vector<Apple>& apples)
+{
+    for(int i = 0; i < apples.size(); i++)
+    {
+        for(int j = i+1; j < apples.size(); j++)
+        {
+            if (apples[i].position == apples[j].position) return true;
+        }
+    }
+    return false;
+}
+
+bool IsPositionOnApple(Vector2 position, const std::vector<Apple>& apples)
+{
+    for (int i = 0; i < apples.size(); i++)
+    {
+        if (apples[i].position == position)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void GenerateApples(std::vector<Apple>& apples, int appleCount)
+{
+    apples.clear();
+    for(int i = 0; i < appleCount; i++)
+    {
+        Apple apple;
+        apple.Init();
+        while(IsPositionOnApple(apple.position, apples)) apple.Reset();
+        apples.push_back(apple);
+    }
+}
 
 enum Direction
 {
@@ -205,14 +243,17 @@ struct Snake
         return false;
     }
 
-    void HandleCollision(Apple& apple)
+    void HandleCollision(std::vector<Apple>& apples)
     {
-        if (IsAppleOnSnake(apple))
+        for(int i = 0; i < apples.size(); i++)
         {
-            Grow();
-            if (hihihiha == true) PlaySound(hihihiha_mp3);
-            else PlaySound(munch);
-            while (IsAppleOnSnake(apple)) apple.Reset();
+            if (IsAppleOnSnake(apples[i]))
+            {
+                Grow();
+                if (hihihiha == true) PlaySound(hihihiha_mp3);
+                else PlaySound(munch);
+                while (IsAppleOnSnake(apples[i])) apples[i].Reset();
+            }
         }
         if (IsHeadOnBody())
         {
@@ -316,7 +357,7 @@ void RestartGame()
 {
     isGameOver = false;
     snake.Reset();
-    apple.Reset();
+    GenerateApples(apples, appleCount);
 }
 
 const Vector2 recSize = {500, 400};
@@ -425,7 +466,7 @@ int main()
     double timer = GetTime();
 
     snake.Init();
-    apple.Init();
+    GenerateApples(apples, appleCount);
 
     while (!WindowShouldClose())
     {
@@ -438,7 +479,7 @@ int main()
             if (GetTime() - timer >= TICK_TIME)
             {
                 snake.Move();
-                snake.HandleCollision(apple);
+                snake.HandleCollision(apples);
                 timer = GetTime();
             }
 
@@ -446,7 +487,7 @@ int main()
         }
 
         snake.Draw();
-        apple.Draw();
+        for (int i=0; i<apples.size(); i++) apples[i].Draw();
         const float buttonSize = 32;
         if (GuiButton({(float)GetRenderWidth() - buttonSize, 0, buttonSize, buttonSize}, ""))
         {
