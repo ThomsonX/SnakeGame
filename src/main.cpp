@@ -16,6 +16,7 @@ bool isGameOver = false;
 bool isSettings = false;
 bool hihihiha = false;
 bool gameOverSound = false;
+int appleCount = 1;
 Sound hihihiha_mp3;
 Sound munch;
 Sound sigeon_pex;
@@ -371,6 +372,30 @@ void DrawSettings()
         gameOverSound ? "Game Over sound: ???" : "Game Over sound: trumpet",
         &gameOverSound
     );
+    posY += buttonSize.y + padding;
+
+    const char* appleText = TextFormat("Apples: %d", appleCount);
+
+    int oldSize = GuiGetStyle(DEFAULT, TEXT_SIZE);
+
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 40);
+
+    if (GuiButton({(GetScreenWidth() / 2.0f - 50 / 2.0f - 150), posY, 50, 50}, "-"))
+    {
+        if (appleCount > 1)
+            appleCount--;
+    }
+
+    DrawTextCentered(appleText, posY, fontSize, WHITE);
+
+    if (GuiButton({(GetScreenWidth() / 2.0f - 50 / 2.0f + 150), posY, 50, 50}, "+"))
+    {
+        if (appleCount < 9)
+            appleCount++;
+    }
+
+    GuiSetStyle(DEFAULT, TEXT_SIZE, oldSize);
+
 }
 
 int main()
