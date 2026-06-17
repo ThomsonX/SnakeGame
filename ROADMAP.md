@@ -16,3 +16,6 @@
 - [x] Split the code into separate files
 - [x] Add more textures
 - [ ] Add an input queue
+- [x] Tidy resources/
+- [ ] Score
+- [ ] High score

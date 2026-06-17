@@ -32,7 +32,7 @@ bool IsPositionOnApple(Vector2 position, const std::vector<Apple>& apples)
 
 void Apple::Init()
 {
-    texture = LoadTexture("resources/apple.png");
+    texture = LoadTexture("resources/textures/apple.png");
 
     Reset();
 }

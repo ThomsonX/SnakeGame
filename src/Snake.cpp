@@ -10,11 +10,11 @@ Snake snake;
 
 void Snake::Init()
 {
-    headTexture = LoadTexture("resources/snake_head.png");
-    headDeadTexture = LoadTexture("resources/snake_head_dead.png");
-    bodyTexture = LoadTexture("resources/snake_body.png");
-    cornerTexture = LoadTexture("resources/snake_corner.png");
-    tailTexture = LoadTexture("resources/snake_tail.png");
+    headTexture = LoadTexture("resources/textures/snake_head.png");
+    headDeadTexture = LoadTexture("resources/textures/snake_head_dead.png");
+    bodyTexture = LoadTexture("resources/textures/snake_body.png");
+    cornerTexture = LoadTexture("resources/textures/snake_corner.png");
+    tailTexture = LoadTexture("resources/textures/snake_tail.png");
 
     Reset();
 }

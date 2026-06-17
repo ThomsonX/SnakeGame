@@ -26,10 +26,10 @@ const Vector2 buttonSize = {160, 50};
 void LoadSounds()
 {
     // hihihiha ;)
-    hihihiha_mp3 = LoadSound("resources/hihihiha.mp3");
-    munch = LoadSound("resources/munch.mp3");
-    sigeon_pex = LoadSound("resources/sigeon_pex.mp3");
-    game_over = LoadSound("resources/game_over.mp3");
+    hihihiha_mp3 = LoadSound("resources/music/hihihiha.mp3");
+    munch = LoadSound("resources/music/munch.mp3");
+    sigeon_pex = LoadSound("resources/music/sigeon_pex.mp3");
+    game_over = LoadSound("resources/music/game_over.mp3");
 
     SetSoundVolume(game_over, 0.35f);
     SetSoundVolume(sigeon_pex, 1.0f);
