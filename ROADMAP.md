@@ -10,9 +10,9 @@
 ## v1.0.0
 
 - [ ] Add multiple players support
-- [ ] Add multiple apples support
+- [x] Add multiple apples support
 - [ ] Add more game modes
 - [x] Add settings
-- [ ] Split the code into separate files
+- [x] Split the code into separate files
 - [x] Add more textures
 - [ ] Add an input queue
