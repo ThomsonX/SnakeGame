@@ -19,3 +19,4 @@ extern bool isSettings;
 extern bool hihihiha;
 extern bool gameOverSound;
 extern int appleCount;
+extern int score;

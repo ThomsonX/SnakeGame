@@ -4,6 +4,7 @@
 #include "Utils.hpp"
 #include <algorithm>
 #include <raylib.h>
+#include <string>
 
 Sound hihihiha_mp3;
 Sound munch;
@@ -16,6 +17,7 @@ bool isSettings = false;
 bool hihihiha = false;
 bool gameOverSound = false;
 int appleCount = 1;
+int score = 0;
 
 const Vector2 recSize = {500, 400};
 const Color bgColor = ColorAlpha(GRAY, 0.5);
@@ -39,7 +41,7 @@ void RestartGame()
 {
     isGameOver = false;
     snake.Reset();
-
+    score = 0;
     apples.clear();
     for (int i = 0; i < appleCount; i++)
     {
@@ -53,6 +55,8 @@ void RestartGame()
 void DrawGameMenu()
 {
     const float buttonSize = 32;
+
+    DrawText(("Score: " + std::to_string(score)).c_str(), 0, 0, fontSize * 1.5, WHITE);
 
     if (GuiButton({(float)GetRenderWidth() - buttonSize, 0, buttonSize, buttonSize}, ""))
     {

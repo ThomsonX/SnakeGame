@@ -106,6 +106,7 @@ void Snake::HandleCollision(std::vector<Apple>& apples)
         if (IsAppleOnSnake(apples[i]))
         {
             Grow();
+            score++;
             if (hihihiha == true)
                 PlaySound(hihihiha_mp3);
             else

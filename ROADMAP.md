@@ -17,5 +17,5 @@
 - [x] Add more textures
 - [ ] Add an input queue
 - [x] Tidy resources/
-- [ ] Score
+- [x] Score
 - [ ] High score
