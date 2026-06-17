@@ -18,4 +18,4 @@
 - [ ] Add an input queue
 - [x] Tidy resources/
 - [x] Score
-- [ ] High score
+- [x] High score

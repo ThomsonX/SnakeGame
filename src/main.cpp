@@ -3,7 +3,9 @@
 #include "UI.hpp"
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include <raylib.h>
+#include <string>
 
 #define RAYGUI_IMPLEMENTATION
 #include <raygui.h>
@@ -24,6 +26,12 @@ int main()
     InitAudioDevice();
     SetAudioStreamBufferSizeDefault(8192);
     LoadSounds();
+
+    const std::string highScorePath = "high_score.txt";
+    {
+        std::ifstream file(highScorePath);
+        file >> highScore;
+    }
 
     const double TICK_TIME = 0.2;
     double timer = GetTime();
@@ -56,6 +64,11 @@ int main()
         if (isSettings) DrawSettings();
 
         EndDrawing();
+    }
+
+    {
+        std::ofstream file(highScorePath);
+        file << highScore;
     }
 
     CloseWindow();

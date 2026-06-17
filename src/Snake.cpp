@@ -58,11 +58,7 @@ void Snake::Move()
     {
         if (head.x < 0 || head.x > boardSize.x - 1 || head.y < 0 || head.y > boardSize.y - 1)
         {
-            isGameOver = true;
-            if (gameOverSound)
-                PlaySound(sigeon_pex);
-            else
-                PlaySound(game_over);
+            GameOver();
             return;
         }
     }
@@ -116,11 +112,7 @@ void Snake::HandleCollision(std::vector<Apple>& apples)
     }
     if (IsHeadOnBody())
     {
-        isGameOver = true;
-        if (gameOverSound)
-            PlaySound(sigeon_pex);
-        else
-            PlaySound(game_over);
+        GameOver();
         RollBack();
     }
 }

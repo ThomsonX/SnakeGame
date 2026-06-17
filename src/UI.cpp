@@ -18,6 +18,7 @@ bool hihihiha = false;
 bool gameOverSound = false;
 int appleCount = 1;
 int score = 0;
+int highScore = 0;
 
 const Vector2 recSize = {500, 400};
 const Color bgColor = ColorAlpha(GRAY, 0.5);
@@ -40,8 +41,9 @@ void LoadSounds()
 void RestartGame()
 {
     isGameOver = false;
-    snake.Reset();
     score = 0;
+    snake.Reset();
+
     apples.clear();
     for (int i = 0; i < appleCount; i++)
     {
@@ -50,6 +52,16 @@ void RestartGame()
         while (IsPositionOnApple(apple.position, apples)) apple.Reset();
         apples.push_back(apple);
     }
+}
+
+void GameOver()
+{
+    isGameOver = true;
+    if (gameOverSound)
+        PlaySound(sigeon_pex);
+    else
+        PlaySound(game_over);
+    if (score > highScore) highScore = score;
 }
 
 void DrawGameMenu()
@@ -77,7 +89,11 @@ void DrawGameOver()
 
     float posY = GetScreenHeight() / 2.0f - recSize.y / 2.0f + margin;
 
-    DrawTextCentered("Game Over!", posY, fontSize, RED);
+    DrawTextCentered("Game Over!", posY, fontSize * 2, RED);
+    posY += fontSize * 2 + padding;
+
+    DrawTextCentered(("High score: " + std::to_string(highScore)).c_str(), posY, fontSize,
+                     score == highScore ? YELLOW : WHITE);
     posY += fontSize + padding;
 
     posY = std::max(posY, GetScreenHeight() / 2.0f - buttonSize.y / 2.0f);
